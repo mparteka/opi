@@ -24,9 +24,12 @@ def pressbutton():
 
 
 
+btn_config = {
+    Button.CONFIG_BOUNCING_TIME: 0,
+    Button.CONFIG_PULLUP: gpio.PULLUP
+}
 
-
-btn = Button(port.PC4, pressbutton)
+btn = Button(port.PC4, pressbutton, btn_config)
 btn.start()
 
 time.sleep(10)

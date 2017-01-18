@@ -22,7 +22,8 @@ class Button(threading.Thread):
                 status = gpio.input(self.pin)
                 if not status:
                     self.__command.execute()
-            time.sleep(0.6)
+                    time.sleep(0.5)
+            time.sleep(0.01)
 
    
     def stop(self):

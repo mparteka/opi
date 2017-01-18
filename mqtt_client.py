@@ -1,41 +1,43 @@
 import paho.mqtt.client as mqtt
 import time
 import re
-import sys
+import threading
 
 class MqttClient:
 
     class __MqttClient:
-        
+
         __client = None
         __broker = '192.168.0.13'
         __port = 8000
         __qos = 2
         __keepalive = 60
         __listeners = []
-        __connected = False
         __on_connect_callback = None
 
         def __init__(self, client_id, on_connect_callback):
             print('Initialising Client with id=' + client_id)
             self.__client = mqtt.Client(client_id, True, None, mqtt.MQTTv31)
             self.__on_connect_callback = on_connect_callback
+            self.__client.on_connect = self.__on_connect
             self.__client.on_publish = self.__on_publish
             self.__client.on_disconnect = self.__on_disconnect
-            
-            while not self.__connected:
-                try:
-                    self.__client.connect(self.__broker, self.__port, self.__keepalive)
-                except OSError:
-                    pass
-            self.__client.loop_start()
-            self.__client.loop_read()
             self.__client.on_message = self.__on_message
+            self.__client.loop_start()
+            self.__connect()
+            
+
+        def __connect(self):
+            try:
+                self.__client.connect(self.__broker, self.__port, self.__keepalive)
+            except OSError:
+                print("Unable to connect. Trying to reconnect in 3 seconds.")
+                threading.Timer(10, self.__connect).start()
+
 
         def __on_connect(self, client, userdata, flags, rc):
             print('Connected with result code: ' + str(rc))
-            self.__client.subscribe("command", 2)
-            self.__connected = True
+            self.__client.loop_read()
             if self.__on_connect_callback is not None:
                 self.__on_connect_callback(client, userdata, flags, rc)
 
@@ -78,7 +80,6 @@ class MqttClient:
             result = re.search('Serial.*: (.*)', cpuinfo)
             return result.group(1)
         except:
-            print(sys.exc_info()[0])
-            return "cannot found serial"
+               return "cannot found serial number"
 
 

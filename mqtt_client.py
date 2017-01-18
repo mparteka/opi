@@ -64,7 +64,7 @@ class MqttClient:
     @staticmethod
     def get_instance():
         if not MqttClient.__instance:
-           MqttClient.init()
+            raise ResourceWarning("Client is not initialized yet.")
         return MqttClient.__instance
     
     @staticmethod

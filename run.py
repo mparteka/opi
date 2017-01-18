@@ -7,7 +7,7 @@ from pyA20.gpio import gpio
 from pyA20.gpio import port
 import re
 import threading
-from temperature import TemperatureSensorDriver
+from temperature import TemperatureSensorController
 
 gpio.init()
 gpio.setcfg(port.PA14, gpio.OUTPUT)

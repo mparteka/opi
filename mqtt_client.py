@@ -36,10 +36,9 @@ class MqttClient:
 
 
         def __on_connect(self, client, userdata, flags, rc):
-            print('Connected with result code: ' + str(rc))
-            self.__client.loop_read()
             if self.__on_connect_callback is not None:
                 self.__on_connect_callback(client, userdata, flags, rc)
+            print('Connected with result code: ' + str(rc))
 
         def __on_message(self, client, userdata, msg):
             for clb in self.__listeners:
